@@ -3,23 +3,24 @@ using System.Collections.Generic;
 
 namespace MyHashTableImplementation
 {
+
     class Program
     {
         static void Main(string[] args)
         {
-            MyDictionary myDictionary = new(10);
+            MyDictionary<string, string> myDictionary = new(10);
 
-            myDictionary.Add("SC", 5);
-            myDictionary.Add("DF", 3);  
-            myDictionary.Add("TF", 0);
+            myDictionary.Add("Person", "Gabriela");
+            myDictionary.Add("Sister", "Patricia");
+            myDictionary.Add("Dog", "Meleca");
             
-            Console.WriteLine("My Version of dictionary: " + myDictionary.Lookup("SC"));
-            Console.WriteLine("My Version of dictionary: " + myDictionary.Lookup("DF"));
-            Console.WriteLine("My Version of dictionary: " + myDictionary.Lookup("TF"));
-            Console.WriteLine("My Version of dictionary: " + myDictionary.Lookup("Unexisting item"));
+            Console.WriteLine("My Version of dictionary: " + myDictionary.Lookup("Person"));
+            Console.WriteLine("My Version of dictionary: " + myDictionary.Lookup("Sister"));
+            Console.WriteLine("My Version of dictionary: " + myDictionary.Lookup("Dog"));
+            Console.WriteLine("My Version of dictionary: " + myDictionary.Lookup("Unexisting Value"));
 
-            myDictionary.Remove("SC");
-            Console.WriteLine("My Version of dictionary: " + myDictionary.Lookup("SC"));
+            myDictionary.Remove("Human");
+            Console.WriteLine("My Version of dictionary: " + myDictionary.Lookup("Human"));
 
             Console.ReadKey();
         }

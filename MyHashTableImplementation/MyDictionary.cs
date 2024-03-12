@@ -1,103 +1,88 @@
 using System;
 using System.Collections.Generic;
 
-struct MyLinkedListNode<T>
+struct MyLinkedListNode<K, V>
 {
 
-    public MyLinkedListNode(string key, T value)
+    public MyLinkedListNode(K key, V value)
     {
         this.key = key;
         this.value = value;
     }
 
-    public string key;
+    public K key;
 
-    public T value;
+    public V value;
 }
 
-public class MyDictionary
+public class MyDictionary<K, V>
 {
-    LinkedList<MyLinkedListNode<int>>[] buckets;
+    LinkedList<MyLinkedListNode<K, V>>[] buckets;
     
-
     public MyDictionary(int capacity)
     {
-        buckets = new LinkedList<MyLinkedListNode<int>>[capacity * 2];
+        buckets = new LinkedList<MyLinkedListNode<K, V>>[capacity * 2];
         for (int i = 0; i < buckets.Length; i++)
         {
             buckets[i] = new();
         }
     }
 
-    public int Lookup(string key)
+    public V Lookup(K key)
     {
-        int hashID = HashFunction(key);
-        var linkedList = buckets[hashID];
-        const int NoneValue = int.MaxValue;
-        if(linkedList.Count == 0)
-        {
-            return NoneValue;
-        }
+        var returnedValue = FindLinkedListNode(key);
 
-
-        //Se houver colisão nas chaves vamos ter que inteirar sobre a linkedlist para buscar o valor específico
-        var current = linkedList.First;
-        int returnedValue = int.MaxValue;
-        for (int i = 0; i < buckets.Length; i++)
-        {
-            if(current.Value.key == key)
-            {
-                returnedValue = current.Value.value;
-                break;
-            }
-            if(current?.Next == null)
-            {
-                break;
-            } 
-            current = current?.Next;
-        }
-
-        return returnedValue;
+        return returnedValue.value;
     }
 
-    public void Add(string key, int value)
+    public void Add(K key, V value)
     {
-        int hashIndex = HashFunction(key);
-        var node = buckets[hashIndex];
-        var myLinkedListNodeInit = new MyLinkedListNode<int>(key, value);
-        node.AddLast(myLinkedListNodeInit);
+        var node = GetLinkedListbyKey(key);
+
+        var myLinkedListNode = new MyLinkedListNode<K, V>(key, value);
+        node.AddLast(myLinkedListNode);
     }
 
-    public void Remove(string key)
+    public void Remove(K key)
     {        
-        int hashID = HashFunction(key);
-        var linkedList = buckets[hashID];
-        if(linkedList.Count == 0)
-        {
-            return;
-        }
+        var node = FindLinkedListNode(key);
+        var linkedList = GetLinkedListbyKey(key);
 
-        var current = linkedList.First;
-
-        for (int i = 0; i < buckets.Length; i++)
-        {
-            if(current.Value.key == key)
-            {
-                linkedList.Remove(current.Value);   
-                break;
-            }
-            if(current?.Next == null)
-            {
-                Console.WriteLine("Error! Cannot Remove because the key does not exists!");
-                break;
-            } 
-            current = current?.Next;
-        }
+        linkedList.Remove(node);
     }
 
-    private int HashFunction(string key)
+    private int HashFunction(K key)
     {
         return Math.Abs(key.GetHashCode()) % buckets.Length;
+    }
+
+    private LinkedList<MyLinkedListNode<K, V>> GetLinkedListbyKey(K key)
+    {
+        int hashIndex = HashFunction(key);
+        var linkedList = buckets[hashIndex];
+
+        return linkedList;
+    }
+
+    private MyLinkedListNode<K, V>FindLinkedListNode(K key)
+    {
+        var linkedList = GetLinkedListbyKey(key);
+        if(linkedList.Count == 0)
+        {
+            return default;
+        }
+
+        var currentNode = linkedList.First;
+        while(currentNode != null)
+        {
+            if(currentNode.Value.key.Equals(key))
+            {
+                break;
+            }
+            currentNode = currentNode?.Next;
+        }
+
+        return currentNode.Value;
     }
 
 }
